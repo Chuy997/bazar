@@ -23,6 +23,9 @@ jobs:
 
       - name: Configure .env
         run: cp .env.example .env
+      - name: Generate APP Key
+        run: php artisan key:generate --ansi
+
 
       - name: Run migrations
         run: php artisan migrate --env=testing --database=sqlite
