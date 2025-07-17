@@ -10,26 +10,39 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
+      # 1. Trae el código
       - uses: actions/checkout@v3
 
+      # 2. Prepara PHP con extensiones
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php: '8.1'
           extensions: sqlite, mbstring, xml, mysql
 
+      # 3. Instala dependencias de Composer
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction
 
+      # 4. Configura el .env para desarrollo
       - name: Configure .env
         run: cp .env.example .env
+
+      # 5. Genera la APP_KEY para el entorno de desarrollo
       - name: Generate APP Key
         run: php artisan key:generate --ansi
 
+      # 6. Prepara el .env.testing y genera su APP_KEY
+      - name: Prepare testing env
+        run: |
+          cp .env .env.testing
+          php artisan key:generate --env=testing --ansi
 
+      # 7. Ejecuta migraciones usando sqlite in-memory
       - name: Run migrations
         run: php artisan migrate --env=testing --database=sqlite
 
+      # 8. Ejecuta la suite de tests
       - name: Run tests
         run: php artisan test
 # CI: generate APP_KEY before migrations
