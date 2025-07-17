@@ -32,3 +32,6 @@ jobs:
 
       - name: Run tests
         run: php artisan test
+# CI: generate APP_KEY before migrations
+
+# — end of workflow —
